@@ -1,11 +1,12 @@
 Summary:	Powerful image loading and rendering library
 Name:		imlib2
 Version:	1.4.5
-Release:	2
+Release:	4
 License:	BSD-like
 Group:		X11/Libraries
 Source0:	http://downloads.sourceforge.net/enlightenment/%{name}-%{version}.tar.gz
 # Source0-md5:	8406786d3852b1b1322c2e4bee3c9e5c
+Patch0:		%{name}-giflib.patch
 URL:		http://enlightenment.org/p.php?p=about/libs/imlib2
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -33,6 +34,9 @@ and more.
 Summary:	Imlib2 header files and development documentation
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	freetype-devel
+Requires:	xorg-libXext-devel
+Requires:	zlib-devel
 
 %description devel
 Header files and development documentation for Imlib2.
@@ -47,6 +51,7 @@ Imlib2 static libraries.
 
 %prep
 %setup -q
+%patch0 -p0
 
 %build
 %{__libtoolize}
@@ -67,7 +72,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/imlib2/*/*.{a,la}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/imlib2/*/*.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -96,7 +102,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/imlib2-config
 %attr(755,root,root) %{_libdir}/libImlib2.so
 %{_includedir}/Imlib2.h
-%{_libdir}/libImlib2.la
 %{_pkgconfigdir}/imlib2.pc
 
 %files static
