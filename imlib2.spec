@@ -1,12 +1,12 @@
 Summary:	Powerful image loading and rendering library
 Name:		imlib2
-Version:	1.4.5
-Release:	4
+Version:	1.4.6
+Release:	1
 License:	BSD-like
 Group:		X11/Libraries
 Source0:	http://downloads.sourceforge.net/enlightenment/%{name}-%{version}.tar.gz
-# Source0-md5:	8406786d3852b1b1322c2e4bee3c9e5c
-Patch0:		%{name}-giflib.patch
+# Source0-md5:	fbc1160285275e88128a84e6d7f08f8b
+Patch0:		%{name}-giflib51.patch
 URL:		http://enlightenment.org/p.php?p=about/libs/imlib2
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -31,27 +31,28 @@ RGBA space rendering and blending, dynamic binary filters, scripting,
 and more.
 
 %package devel
-Summary:	Imlib2 header files and development documentation
+Summary:	imlib2 header files and development documentation
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	freetype-devel
+Requires:	xorg-libX11-devel
 Requires:	xorg-libXext-devel
 Requires:	zlib-devel
 
 %description devel
-Header files and development documentation for Imlib2.
+Header files and development documentation for imlib2.
 
-%package static
-Summary:	Imlib2 static libraries
+%package loaders
+Summary:	imlib2 loaders and filters
 Group:		X11/Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
-%description static
-Imlib2 static libraries.
+%description loaders
+Support for diffrent image formats and filters.
 
 %prep
 %setup -q
-%patch0 -p0
+%patch0 -p1
 
 %build
 %{__libtoolize}
@@ -60,8 +61,10 @@ Imlib2 static libraries.
 %{__autoheader}
 %{__automake}
 %configure \
+	--disable-silent-rules	\
+	--disable-static	\
 	%ifarch i686
-	--enable-mmx	\
+	--enable-mmx		\
 	%endif
 	--enable-visibility-hiding
 %{__make}
@@ -83,18 +86,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS COPYING COPYING-PLAIN README
-%attr(755,root,root) %{_bindir}/imlib2_*
-%attr(755,root,root) %{_libdir}/imlib2/filters/*.so
-%attr(755,root,root) %{_libdir}/imlib2/loaders/*.so
-
 %attr(755,root,root) %ghost %{_libdir}/libImlib2.so.?
 %attr(755,root,root) %{_libdir}/libImlib2.so.*.*.*
 
-%dir %{_libdir}/imlib2
-%dir %{_libdir}/imlib2/filters
-%dir %{_libdir}/imlib2/loaders
-%{_datadir}/imlib2
 
 %files devel
 %defattr(644,root,root,755)
@@ -104,7 +98,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/Imlib2.h
 %{_pkgconfigdir}/imlib2.pc
 
-%files static
+%files loaders
 %defattr(644,root,root,755)
-%{_libdir}/libImlib2.a
+%dir %{_libdir}/imlib2
+%dir %{_libdir}/imlib2/filters
+%dir %{_libdir}/imlib2/loaders
+%{_datadir}/imlib2
+%attr(755,root,root) %{_bindir}/imlib2_*
+%attr(755,root,root) %{_libdir}/imlib2/filters/*.so
+%attr(755,root,root) %{_libdir}/imlib2/loaders/*.so
 
