@@ -1,18 +1,17 @@
 Summary:	Powerful image loading and rendering library
 Name:		imlib2
 Version:	1.4.6
-Release:	1
+Release:	3
 License:	BSD-like
 Group:		X11/Libraries
 Source0:	http://downloads.sourceforge.net/enlightenment/%{name}-%{version}.tar.gz
 # Source0-md5:	fbc1160285275e88128a84e6d7f08f8b
-Patch0:		%{name}-giflib51.patch
 URL:		http://enlightenment.org/p.php?p=about/libs/imlib2
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bzip2-devel
 BuildRequires:	freetype-devel
-BuildRequires:	giflib-devel
+BuildRequires:	giflib4-devel
 BuildRequires:	libid3tag-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libltdl-devel
@@ -52,7 +51,10 @@ Support for diffrent image formats and filters.
 
 %prep
 %setup -q
-%patch0 -p1
+
+# x86_64-freddix-linux-gcc: error: @my_libs@: No such file or directory
+# Makefile:431: recipe for target 'libgiblib.la' failed
+%{__sed} -i 's/@my_libs@//' imlib2-config.in
 
 %build
 %{__libtoolize}
